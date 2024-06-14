@@ -5,7 +5,7 @@ O mimic-bot é um robô baseado na API do [Gemini](https://ai.google.dev/gemini-
  que tem a capacidade de interpretar pessoas ou personagens famosos.
 
 ## O que ele pode fazer? 🤔
-Por meio da utilização de diversas bibliotecas o MImic consegue entender o que foi dito no microfone e também consegue compreender o que foi escrito.
+Por meio da utilização de diversas bibliotecas o Mimic consegue entender o que foi dito no microfone e também consegue compreender o que foi escrito.
 
 
 ## Principais bibliotecas utilizadas:
