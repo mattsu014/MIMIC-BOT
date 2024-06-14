@@ -5,20 +5,28 @@ import pyttsx3
 import google.generativeai as genai
 
 def reconhecer_fala(rec):
-    with sr.Microphone() as mic:
-        rec.adjust_for_ambient_noise(mic)
-        print("Pressione 'r' para começar a escutar.")
-        keyboard.wait('r')
-        print("Escutando...")
-        audio = rec.listen(mic)
-        print("Parando a escuta...")
-    try:
-        return rec.recognize_google(audio, language="pt-BR")
-    except sr.UnknownValueError:
-        print("Não consegui entender o áudio")
-    except sr.RequestError as e:
-        print(f"Erro ao solicitar resultados do serviço de reconhecimento de fala: {e}")
-    return None
+    while True:
+        with sr.Microphone() as mic:
+            rec.adjust_for_ambient_noise(mic)
+            print("Pressione 'r' para começar a escutar.")
+            keyboard.wait('r')
+            print("Escutando...")
+            audio = rec.listen(mic)
+            print("Parando a escuta...")
+        try:
+            pergunta = rec.recognize_google(audio, language="pt-BR")
+            print(f"Você disse: {pergunta}")
+            print("Confirme se a transcrição está correta (sim/não): ")
+            confirmacao = input().strip().lower()
+            if confirmacao == "sim":
+                return pergunta
+            else:
+                print("Por favor, fale novamente.")
+        except sr.UnknownValueError:
+            print("Não consegui entender o áudio. Por favor, tente novamente.")
+        except sr.RequestError as e:
+            print(f"Erro ao solicitar resultados do serviço de reconhecimento de fala: {e}")
+            return None
 
 def selecionar_voz(engine):
     voices = engine.getProperty('voices')
@@ -52,9 +60,23 @@ def main():
     personagem = input().strip()
     print("\n")
     historico = []
-
+    
     while True:
-        pergunta = reconhecer_fala(rec)
+        while True:
+            print("Selecione a opção de captação de pergunta:")
+            print("[1] Áudio")
+            print("[2] Texto")
+            escolha = int(input())
+            if escolha == 1:
+                pergunta = reconhecer_fala(rec)
+                break
+            elif escolha == 2:
+                print("Digite sua pergunta: ")
+                texto = str(input())
+                pergunta = texto
+                break
+            else:
+                print("Opção inválida. Por favor, selecione 1 ou 2.")
         if pergunta:
             print(f"Você disse: {pergunta}")
         else:
@@ -69,10 +91,10 @@ def main():
         response = model.generate_content(atuacao)
         resposta_texto = response.text.strip()
         historico.append(f"{personagem}: {resposta_texto}")
-
+        
         print(resposta_texto)
         falar_resposta(engine, resposta_texto)
         print("\n")
-
+        
 if __name__ == "__main__":
     main()
